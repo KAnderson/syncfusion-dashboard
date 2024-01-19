@@ -77,14 +77,14 @@ Panel.SizeX(1).SizeY(1).Row(0).Col(1).ContentTemplate(
                     </div>
                     ).Add();
                     Panel.SizeX(2).SizeY(2).Row(0).Col(0).ContentTemplate(
-                                    @<div class="e-panel-container">
-                                        <div class="e-panel-header">
-                                            <div class="title" id="header1">
-                                                Financial Health
-                                            </div>
-                                        </div>
-                                        <div class="e-panel-content" id="pie-container">
-                                            @(Html.EJS().AccumulationChart("piechart").EnableAnimation(true).EnableBorderOnMouseMove(true).EnableSmartLabels(true)
+                        @<div>
+                            <div class="e-panel-container">
+                                <div class="e-panel-header">
+                                    Financial Health
+                                </div>
+                                <div class="e-panel-content">
+                                    <div style="width:100%; height:100%">
+                                        @(Html.EJS().AccumulationChart("piechart").EnableAnimation(true).EnableBorderOnMouseMove(true).EnableSmartLabels(true)
                                             .Series(series =>
                                             {
                                                 series.TooltipMappingName("tip")
@@ -102,10 +102,13 @@ Panel.SizeX(1).SizeY(1).Row(0).Col(1).ContentTemplate(
                                             .LegendSettings(ls => ls.Visible(false).ToggleVisibility(false))
                                             .Tooltip(tp => tp.Enable(true).Format("${point.text}"))
                                             .Render()
-                                            )
-                                            @*.Load("loadPiechart").PointRender("onPointRender").PointClick("pointClick")*@
-                                        </div>
+                                        )
+                                        @*.Load("loadPiechart").PointRender("onPointRender").PointClick("pointClick")*@
+                                            
                                     </div>
+                                </div>
+                            </div>
+                        </div>
                     ).Add();
                       Panel.SizeX(1).SizeY(1).Row(1).Col(2).ContentTemplate(
                           @<div>
