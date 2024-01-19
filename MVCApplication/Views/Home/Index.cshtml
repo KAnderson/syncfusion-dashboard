@@ -1,0 +1,534 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+
+@using Syncfusion.EJ2;
+@using Syncfusion.EJ2.Popups;
+
+
+@model MVCApplication.Controllers.HomeController.spacingModel
+
+
+<div class="control-section">
+    <layoutbody>
+    <detailColumn>
+        <detailSection>
+            <div style="width:100%;height: 30px">
+                @Html.EJS().Button("togglebtn").IsToggle(true).IconCss("edit").Content("Edit").CssClass("toggle e-outline e-flat e-primary").Render()
+            </div>
+            <div style="padding:5px;margin-top:5px;text-align: end;">
+                <div class="add-widget-button e-control e-btn e-lib" id="dialogBtn">
+                    Add New Widget
+                </div>
+            </div>
+            @*dashboard layout*@
+
+            @Html.EJS().DashboardLayout("editableLayout").Columns(4).ResizeStop("onPanelResize").AllowResizing(true).AllowDragging(false).CellSpacing(Model.cellSpacing).Panels(Panel =>
+            {
+                Panel.SizeX(1).SizeY(1).Row(0).Col(0).ContentTemplate(
+                        @<div>
+                            <div class="e-panel-container">
+                                <div class="e-panel-header">
+                                    <div>
+                                        Line Chart
+                                    </div>
+                                </div>
+                                <div class="e-panel-content">
+                                    @(Html.EJS().Chart("linechart").Series(series =>
+                                {
+                                    series.Type(Syncfusion.EJ2.Charts.ChartSeriesType.Column)
+                                        .Marker(mr => mr.DataLabel(dl => dl.Visible(false))).XName("x").Fill("#00bdae")
+                                        .YName("y").DataSource(ViewBag.lineSource1).Name("Jan").Width(2).Add();
+                                    series.Type(Syncfusion.EJ2.Charts.ChartSeriesType.Column)
+                                        .Marker(mr => mr.DataLabel(dl => dl.Visible(false))).XName("x").YName("y").Fill("#e56691").DataSource(ViewBag.lineSource)
+                                        .Name("Feb").Width(2).Add();
+                                    series.Type(Syncfusion.EJ2.Charts.ChartSeriesType.Column)
+                                        .Marker(mr => mr.DataLabel(dl => dl.Visible(false))).XName("x").Fill("#357cd2")
+                                        .YName("y").DataSource(ViewBag.lineSource2).Name("Mar").Width(2).Add();
+
+                                }).PrimaryYAxis(px => px.LabelStyle(ls => ls.Color("transparent")).LineStyle(ls => ls.Width(0)).MajorTickLines(mg => mg.Width(0))
+                                    .MajorGridLines(mg => mg.Width(0))
+                                ).PrimaryXAxis(px => px.Interval(1)
+                                    .ValueType(Syncfusion.EJ2.Charts.ValueType.Category).MajorGridLines(mg => mg.Width(0))
+                                ).Tooltip(tt => tt.Enable(true)).ChartArea(area => area.Border(br => br.Color("transparent"))
+                                ).LegendSettings(lg => lg.Visible(true)).Load("loadLinechart").Render())
+                                </div>
+                            </div>
+                        </div>
+).Add();
+Panel.SizeX(1).SizeY(1).Row(0).Col(1).ContentTemplate(
+                    @<div>
+                        <div class="e-panel-container">
+                            <div class="e-panel-header">
+                                <div>
+                                    Circular Gauge
+                                </div>
+                            </div>
+                            <div class="e-panel-content">
+                                <div style="width:100%; height:100%">
+                                    @Html.EJS().CircularGauge("gauge").Title("Customer Satisfaction Score").TitleStyle(Ts => Ts.Size("18px").FontFamily("inherit").FontWeight("inherit")).CenterY("65%").LegendSettings(Ls => Ls.Position(Syncfusion.EJ2.CircularGauge.LegendPosition.Bottom).Width("55%").Visible(true).TextStyle(Ts => Ts.Size("12px").FontFamily("inherit"))).Tooltip(Tip => Tip.Enable(true).Template("<div style='font-size:18px; background: white; font-weight:500;width:180px;color:#595959;border:1px solid #e8e8e8'>Current Score: 7.5 </div>")).Axes(axes => axes
+                                        .Radius("100%").StartAngle(270).EndAngle(90).Minimum(0).Maximum(2).LabelStyle(ls => ls.Position(Syncfusion.EJ2.CircularGauge.Position.Outside).Font(ViewBag.labelFont).Offset(-16))
+                                        .LineStyle(lin => lin.Width(0))
+                                        .MinorTicks(mi => mi.Height(0.0).Color("Transparent")).MajorTicks(mj => mj.Width(1.5).Height(12).Interval(0.5).Offset(16))
+                                        .Pointers(ViewBag.Pointers)
+                                        .Annotations(ViewBag.Annotations)
+                                        .Ranges(ViewBag.Ranges).Add()).Render()
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    ).Add();
+                    Panel.SizeX(2).SizeY(2).Row(0).Col(0).ContentTemplate(
+                                    @<div class="e-panel-container">
+                                        <div class="e-panel-header">
+                                            <div class="title" id="header1">
+                                                Financial Health
+                                            </div>
+                                        </div>
+                                        <div class="e-panel-content" id="pie-container">
+                                            @(Html.EJS().AccumulationChart("piechart").EnableAnimation(true).EnableBorderOnMouseMove(true).EnableSmartLabels(true)
+                                            .Series(series =>
+                                            {
+                                                series.TooltipMappingName("tip")
+                                                    .DataLabel(dl =>
+                                                    {
+                                                        dl.Visible(true).Name("text").Font(f => f.Size("14px"));
+                                                        dl.EnableRotation(true);
+                                                        dl.MaxWidth(20);
+                                                        dl.TextWrap(Syncfusion.EJ2.Charts.TextWrap.Wrap);
+                                                        dl.Angle(-45);
+                                                    })
+                                                    .InnerRadius("40%").XName("x").YName("y")
+                                                    .Type(Syncfusion.EJ2.Charts.AccumulationType.Pie).Radius("90%")
+                                                    .StartAngle(0).Palettes(ViewBag.Palettes).EndAngle(360)
+                                                    .DataSource(ViewBag.pieDataSource).Add();
+                                            })
+                                            .CenterLabel(cl => cl.Text("Text"))
+                                            .LegendSettings(ls => ls.Visible(false).ToggleVisibility(false))
+                                            .Tooltip(tp => tp.Enable(true).Format("${point.text}"))
+                                            .Render()
+                                            )
+                                            @*.Load("loadPiechart").PointRender("onPointRender").PointClick("pointClick")*@
+                                        </div>
+                                    </div>
+                    ).Add();
+                      Panel.SizeX(1).SizeY(1).Row(1).Col(2).ContentTemplate(
+                          @<div>
+                        <div class="e-panel-container">
+                            <div class="e-panel-header">
+                                <div>
+                                    Spline Chart
+                                </div>
+                            </div>
+                            <div class="e-panel-content">
+                                @(Html.EJS().Chart("spline").Series(series =>
+                                        {
+                                            series.Type(Syncfusion.EJ2.Charts.ChartSeriesType.SplineArea).Opacity(0.5).XName("x").YName("y").Fill("rgb(239, 183, 202)").DataSource(ViewBag.splineSource1).Name("Jan").Add();
+                                            series.Type(Syncfusion.EJ2.Charts.ChartSeriesType.SplineArea).Opacity(0.5).XName("x").YName("y").Fill("rgb(0, 189, 174)").DataSource(ViewBag.splineSource2).Name("Feb").Add();
+
+                                        }).PrimaryXAxis(px => px.LabelIntersectAction(Syncfusion.EJ2.Charts.LabelIntersectAction.Rotate90)
+                                            .MajorGridLines(mg => mg.Width(0)).EdgeLabelPlacement(Syncfusion.EJ2.Charts.EdgeLabelPlacement.Shift)
+                                            .ValueType(Syncfusion.EJ2.Charts.ValueType.DateTime).IntervalType(Syncfusion.EJ2.Charts.IntervalType.Months).LabelFormat("MMM")
+                                        ).PrimaryYAxis(py => py.LabelFormat("{value}%").MajorTickLines(mt => mt.Width(0)).MinorTickLines(mt => mt.Width(0)).LineStyle(ls => ls.Width(0))
+                                        ).ChartArea(area => area.Border(br => br.Color("transparent"))).Load("loadSplinechart").Render())
+
+                            </div>
+                        </div>
+                    </div>
+                    ).Add();
+                }).Render()
+        </detailSection>
+    </detailColumn>
+    </layoutbody>
+</div>
+
+@*Dialog*@
+<div id="target">
+    @Html.EJS().Dialog("dialog").Width("435px").Height("260px").Target("#target").Header("Add a Widget").ZIndex(20).ShowCloseIcon(true).IsModal(true).Visible(false).Content("<div><div id='linetemplate'><p class='dialog-text'>Linechart (1x1) </p></div><div id='gaugetemplate'><p class='dialog-text'>Circular Gauge (1x1) </p></div><div id='splinetemplate'><p class='dialog-text'>Splinechart (2x1) </p></div></div>").AnimationSettings(new DialogAnimationSettings() { Effect = DialogEffect.Zoom }).Render()
+</div>
+<div id="content"></div>
+
+
+<script>
+
+    function onPanelResize(args) {
+        var dashboardObject = document.getElementById("editableLayout").ej2_instances[0];
+        var chartElement = args.element ? (args.element.querySelector('.e-panel-container .e-panel-content .e-control')) : null;
+        if (chartElement) {
+            let chartObj = (chartElement).ej2_instances[0];
+            chartObj.height = '95%';
+            chartObj.width = '100%';
+            chartObj.refresh();
+        }
+    }
+    document.addEventListener('DOMContentLoaded', function () {
+        var lineObj = document.getElementById('linechart').ej2_instances[0];
+        var gaugeObj = document.getElementById('gauge').ej2_instances[0];
+        var splineObj = document.getElementById('spline').ej2_instances[0];
+        var dashboardObject = document.getElementById("editableLayout").ej2_instances[0];
+        lineObj.refresh(); gaugeObj.refresh(); splineObj.refresh();
+        var count = 3;
+
+        document.getElementById('dialogBtn').onclick = function () {
+            var dialogObj = document.getElementById("dialog").ej2_instances[0];
+            dialogObj.show();
+            document.getElementById('linetemplate').onclick = function (e) {
+                var countValue = count.toString();
+                var panel = [{
+                    'id': '_layout' + countValue, 'sizeX': 1, 'sizeY': 1, 'row': 0, 'col': 0,
+                    header: '<div>Line Chart</div>', content: '<div id=_line' + countValue + ' style="height:100%; width:100%"></div>'
+                }];
+                count = count + 1;
+                dashboardObject.addPanel(panel[0]);
+
+                var linechartObj = new ej.charts.Chart({
+                    //Initializing Primary X Axis
+                    primaryXAxis: {
+                        valueType: 'Category', interval: 1, majorGridLines: { width: 0 }
+                    },
+                    chartArea: { border: { width: 0 } },
+                    width: '99%',
+                    height: '100%',
+                    //Initializing Primary X Axis
+                    primaryYAxis: {
+                        majorGridLines: { width: 0 },
+                        majorTickLines: { width: 0 }, lineStyle: { width: 0 }, labelStyle: { color: 'transparent' }
+                    },
+                    //Initializing Chart Series
+                    series: [
+                        {
+                            type: 'Column', xName: 'x', width: 2, yName: 'y', name: 'Jan', fill: '#00bdae',
+                            dataSource: [{ x: 'Jan', y: 46 }, { x: 'Feb', y: 27 }, { x: 'Mar', y: 26 }],
+                            marker: {
+                                dataLabel: {
+                                    visible: false, position: 'Top', font: {
+                                        fontWeight: '600', color: '#ffffff'
+                                    }
+                                }
+                            }
+                        },
+                        {
+                            type: 'Column', xName: 'x', width: 2, yName: 'y', name: 'Feb', fill: '#e56691',
+                            dataSource: [{ x: 'Jan', y: 37 }, { x: 'Feb', y: 23 }, { x: 'Mar', y: 18 }],
+                            marker: { dataLabel: { visible: false, position: 'Top', font: { fontWeight: '600', color: '#ffffff' } } }
+                        },
+                        {
+                            type: 'Column', xName: 'x', width: 2, yName: 'y', name: 'Mar', fill: '#357cd2',
+                            dataSource: [{ x: 'Jan', y: 38 }, { x: 'Feb', y: 17 }, { x: 'Mar', y: 26 }],
+                            marker: { dataLabel: { visible: false, position: 'Top', font: { fontWeight: '600', color: '#ffffff' } } }
+                        }
+                    ],
+                    load: function (args) {
+                        var selectedTheme = location.hash.split('/')[1];
+                        selectedTheme = selectedTheme ? selectedTheme : 'Material';
+                        args.chart.theme = (selectedTheme.charAt(0).toUpperCase() +
+                            selectedTheme.slice(1)).replace(/-dark/i, 'Dark');
+                    }
+                });
+                linechartObj.appendTo('#' + '_line' + countValue);
+                linechartObj.refresh();
+                dialogObj.hide();
+            };
+            document.getElementById('gaugetemplate').onclick = function (e) {
+                var countValue = count.toString();
+                var panel = [{
+                    'id': '_layout' + countValue, 'sizeX': 1, 'sizeY': 1, 'row': 0, 'col': 0,
+                    header: '<div>Circular Gauge</div>', content: '<div id=_gauge' + countValue + ' style="height:100%; width:100%;"></div>'
+                }];
+                count = count + 1;
+                dashboardObject.addPanel(panel[0]);
+                var gauge = new ej.circulargauge.CircularGauge({
+                    axes: [{
+                        minimum: 0,
+                        maximum: 100,
+                        ranges: [{
+                            start: 40,
+                            end: 80,
+                            radius: '100'
+                        }]
+                    }],
+                    width: '100%',
+                    height: '100%'
+                });
+                gauge.appendTo('#' + '_gauge' + countValue);
+                gauge.refresh();
+                dialogObj.hide();
+            };
+            document.getElementById('splinetemplate').onclick = function (e) {
+                var countValue = count.toString();
+                var panel = [{
+                    'id': '_layout' + countValue, 'sizeX': 1, 'sizeY': 1, 'row': 0, 'col': 0,
+                    header: '<div>Spline Chart</div>', content: '<div id=_spline' + countValue + ' style="height:100%; width:100%"></div>'
+                }];
+                count = count + 1;
+                dashboardObject.addPanel(panel[0]);
+                var chart = new ej.charts.Chart({
+                    //Initializing Primary X Axis
+                    primaryXAxis: {
+                        valueType: 'DateTime',
+                        labelFormat: 'MMM',
+                        majorGridLines: { width: 0 },
+                        intervalType: 'Months',
+                        edgeLabelPlacement: 'Shift'
+                    },
+                    //Initializing Primary Y Axis
+                    primaryYAxis: {
+                        maximum: 4, interval: 1,
+                        labelFormat: '{value}',
+                        lineStyle: { width: 0 },
+                        majorTickLines: { width: 0 },
+                        minorTickLines: { width: 0 }
+                    },
+                    chartArea: {
+                        border: {
+                            width: 0
+                        }
+                    },
+                    //Initializing Chart Series
+                    series: [
+                        {
+                            dataSource: [
+                                { x: new Date(2002, 0, 1), y: 2.2 }, { x: new Date(2003, 0, 1), y: 3.4 },
+                                { x: new Date(2004, 0, 1), y: 2.8 }, { x: new Date(2005, 0, 1), y: 1.6 },
+                                { x: new Date(2006, 0, 1), y: 2.3 }, { x: new Date(2007, 0, 1), y: 2.5 },
+                                { x: new Date(2008, 0, 1), y: 2.9 }, { x: new Date(2009, 0, 1), y: 3.8 },
+                                { x: new Date(2010, 0, 1), y: 1.4 }, { x: new Date(2011, 0, 1), y: 3.1 }
+                            ],
+                            name: 'Jan', xName: 'x', yName: 'y', type: 'SplineArea',
+                            border: { color: 'transparent' },
+                            fill: 'rgb(239, 183, 202)',
+                            opacity: 0.5
+                        },
+                        {
+                            dataSource: [
+                                { x: new Date(2002, 0, 1), y: 2 }, { x: new Date(2003, 0, 1), y: 1.7 },
+                                { x: new Date(2004, 0, 1), y: 1.8 }, { x: new Date(2005, 0, 1), y: 2.1 },
+                                { x: new Date(2006, 0, 1), y: 2.3 }, { x: new Date(2007, 0, 1), y: 1.7 },
+                                { x: new Date(2008, 0, 1), y: 1.5 }, { x: new Date(2009, 0, 1), y: 2.8 },
+                                { x: new Date(2010, 0, 1), y: 1.5 }, { x: new Date(2011, 0, 1), y: 2.3 }
+                            ],
+                            name: 'Feb', xName: 'x', yName: 'y', type: 'SplineArea',
+                            border: { color: 'transparent' },
+                            fill: 'rgb(0, 189, 174)',
+                            opacity: 0.5
+                        }
+                    ],
+                    load: function (args) {
+                        var selectedTheme = location.hash.split('/')[1];
+                        selectedTheme = selectedTheme ? selectedTheme : 'Material';
+                        args.chart.theme = (selectedTheme.charAt(0).toUpperCase() +
+                            selectedTheme.slice(1)).replace(/-dark/i, 'Dark');
+                    },
+                    width: '99%',
+                    height: '100%'
+                });
+                chart.appendTo('#' + '_spline' + countValue);
+                chart.refresh();
+                dialogObj.hide();
+            };
+        };
+        document.getElementById('togglebtn').onclick = function () {
+            var edit = document.getElementById("togglebtn").ej2_instances[0];
+            if (this.classList.contains('e-active')) {
+                dashboardObject.allowResizing = true;
+                dashboardObject.allowDragging = true;
+                edit.content = "Save";
+                edit.iconCss = "save";
+                document.getElementById('dialogBtn').style.display = 'block';
+            } else {
+                dashboardObject.allowResizing = false;
+                dashboardObject.allowDragging = false;
+                edit.content = "Edit";
+                edit.iconCss = "edit";
+                document.getElementById('dialogBtn').style.display = 'none';
+            }
+        }
+    });
+    var loadLinechart = function (args) {
+        var selectedTheme = location.hash.split('/')[1];
+        selectedTheme = selectedTheme ? selectedTheme : 'Material';
+        args.chart.theme = (selectedTheme.charAt(0).toUpperCase() + selectedTheme.slice(1)).replace(/-dark/i, "Dark");
+    }
+
+    var loadSplinechart = function (args) {
+        var selectedTheme = location.hash.split('/')[1];
+        selectedTheme = selectedTheme ? selectedTheme : 'Material';
+        args.chart.theme = (selectedTheme.charAt(0).toUpperCase() + selectedTheme.slice(1)).replace(/-dark/i, "Dark");
+    }
+</script>
+<style>
+    layoutBody {
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-box-orient: horizontal;
+        -webkit-box-direction: normal;
+        -ms-flex-flow: row wrap;
+        flex-flow: row wrap;
+    }
+
+    detailColumn {
+        flex-basis: 100px;
+        flex-grow: 1;
+        flex-shrink: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        padding: 10px 10px 10px 10px;
+    }
+
+    detailSection {
+        min-height: 100px;
+        flex-grow: 0;
+        flex-shrink: 0;
+        flex-basis: auto;
+        overflow: auto;
+        background-color: white;
+        -webkit-overflow-scrolling: touch;
+        overflow: auto;
+        margin-top: 10px;
+        padding: 10px 10px 10px 10px;
+    }
+
+    .tailwind #togglebtn,
+    .tailwind-dark #togglebtn,
+    .highcontrast #togglebtn {
+        padding: 0 13px;
+    }
+
+    #dialogBtn {
+        display: none;
+    }
+
+    .e-dlg-container.e-dlg-center-center {
+        z-index: 2000 !important;
+    }
+
+    .e-btn,
+    .e-css.e-btn {
+        display: block;
+    }
+
+    #linechart, #spline, #gauge {
+        height: 100% !important;
+        width: 100% !important;
+    }
+
+    .dialog-text {
+        height: 35px;
+        border: 1px solid #80808029;
+        vertical-align: middle;
+        line-height: 35px;
+        border-radius: 4px;
+        padding-left: 12px;
+        margin-bottom: 5%;
+        cursor: pointer;
+    }
+
+    @@media (max-width: 650px) {
+        #togglebtn {
+            width: 90px !important;
+        }
+    }
+
+    .add-widget-button {
+        padding: 10px;
+        text-align: center;
+        margin-bottom: 10px;
+        cursor: pointer;
+        font-size: 15px;
+    }
+
+    .e-dashboardlayout.e-control .e-panel:hover span {
+        display: block;
+    }
+
+    .e-dashboardlayout.e-control .e-panel .e-panel-container .e-panel-header {
+        border-bottom: 2px solid #e6e9ed !important;
+        height: 35px;
+        padding: 0 15px 0 15px;
+        line-height: 35px;
+    }
+
+    .material .sb-demo-section .container-fluid,
+    .fabric .sb-demo-section .container-fluid,
+    .bootstrap4 .sb-demo-section .container-fluid,
+    .bootstrap .sb-demo-section .container-fluid {
+        background: #E5E5E5;
+    }
+
+    .tailwind .sb-demo-section .container-fluid {
+        background: #F9FAFB;
+    }
+
+    .e-panel-content {
+        height: calc(100% - 37px) !important;
+        overflow: hidden;
+        width: 100%;
+    }
+
+    .bootstrap5-dark .dialog-text,
+    .highcontrast .dialog-text,
+    .tailwind-dark .dialog-text,
+    .fabric-dark .dialog-text,
+    .bootstrap-dark .dialog-text {
+        border: 1px solid #FFFFFF;
+    }
+
+    .e-dashboardlayout.e-control .e-panel,
+    .e-dashboardlayout.e-control .e-panel:hover,
+    .e-dashboardlayout.e-control .e-panel:active {
+        border: 1px solid #bbb;
+    }
+
+    .e-dialog .e-dlg-header-content {
+        border-bottom: none;
+        padding: 18px 18px 18px 20px;
+    }
+
+    .edit::before {
+        content: '\e501';
+        font-family: 'e-sb-icons';
+        margin-left: -7px;
+        vertical-align: middle;
+    }
+
+    .save::before {
+        content: '\e500';
+        font-family: 'e-sb-icons';
+        margin-left: -7px;
+        vertical-align: middle;
+    }
+
+
+    @@font-face {
+        font-family: 'e-sb-icons';
+        src: url(data:application/x-font-ttf;charset=utf-8;base64,AAEAAAAKAIAAAwAgT1MvMjttR/MAAAEoAAAAVmNtYXDlEOVaAAABjAAAADhnbHlmAM1kuQAAAcwAAAD8aGVhZBRipc8AAADQAAAANmhoZWEIUQQEAAAArAAAACRobXR4DAAAAAAAAYAAAAAMbG9jYQA6AH4AAAHEAAAACG1heHABEQA4AAABCAAAACBuYW1lWD3y/QAAAsgAAAIlcG9zdNvk7cwAAATwAAAANQABAAAEAAAAAFwEAAAAAAAD9AABAAAAAAAAAAAAAAAAAAAAAwABAAAAAQAApr5cCV8PPPUACwQAAAAAANioMG8AAAAA2KgwbwAAAAAD9AP0AAAACAACAAAAAAAAAAEAAAADACwABAAAAAAAAgAAAAoACgAAAP8AAAAAAAAAAQQAAZAABQAAAokCzAAAAI8CiQLMAAAB6wAyAQgAAAIABQMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAUGZFZABA5QDlAQQAAAAAXAQAAAAAAAABAAAAAAAABAAAAAQAAAAEAAAAAAAAAgAAAAMAAAAUAAMAAQAAABQABAAkAAAABAAEAAEAAOUB//8AAOUA//8AAAABAAQAAAABAAIAAAAAADoAfgAEAAAAAAP0A/MAAwALABkAIwAAAREhEQEVMzUzFSE1IxEhETMVMxEjESERIxEjERUhESM1IzUhAx79xAEeR0j+m0gB9I9HR/02SEcD6EdI/KcBcf7iAR4CPI+P19f+4gEeSPzuAWb+mgNa/KZHA1lIRwAAAAMAAAAAA/QD9AADAAgAKwAACQEnCQEDJQEnNwcXPwc1Lw8PBgLH/ko2Abb9uT4BGQJC2m0/2z8HBgUFAwMCAQIEBQcICQoLDA0NDw8PEA0NDQwLCwsCkf5KNgG2/l7+5z4CQ9puP9s/CgsLCwwNDQ0QDw8PDQ0MCwoJCAcFBAIBAQEDAwUFBgAAABIA3gABAAAAAAAAAAEAAAABAAAAAAABAAcAAQABAAAAAAACAAcACAABAAAAAAADAAcADwABAAAAAAAEAAcAFgABAAAAAAAFAAsAHQABAAAAAAAGAAcAKAABAAAAAAAKACwALwABAAAAAAALABIAWwADAAEECQAAAAIAbQADAAEECQABAA4AbwADAAEECQACAA4AfQADAAEECQADAA4AiwADAAEECQAEAA4AmQADAAEECQAFABYApwADAAEECQAGAA4AvQADAAEECQAKAFgAywADAAEECQALACQBIyBlai1pY29uUmVndWxhcmVqLWljb25lai1pY29uVmVyc2lvbiAxLjBlai1pY29uRm9udCBnZW5lcmF0ZWQgdXNpbmcgU3luY2Z1c2lvbiBNZXRybyBTdHVkaW93d3cuc3luY2Z1c2lvbi5jb20AIABlAGoALQBpAGMAbwBuAFIAZQBnAHUAbABhAHIAZQBqAC0AaQBjAG8AbgBlAGoALQBpAGMAbwBuAFYAZQByAHMAaQBvAG4AIAAxAC4AMABlAGoALQBpAGMAbwBuAEYAbwBuAHQAIABnAGUAbgBlAHIAYQB0AGUAZAAgAHUAcwBpAG4AZwAgAFMAeQBuAGMAZgB1AHMAaQBvAG4AIABNAGUAdAByAG8AIABTAHQAdQBkAGkAbwB3AHcAdwAuAHMAeQBuAGMAZgB1AHMAaQBvAG4ALgBjAG8AbQAAAAACAAAAAAAAAAoAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMBAgEDAQQABHNhdmUEZWRpdAAAAAAA) format('truetype');
+        font-weight: normal;
+        font-style: normal;
+    }
+
+    [class^="sf-icon-"],
+    [class*=" sf-icon-"] {
+        font-family: 'e-sb-icons' !important;
+        speak: none;
+        font-size: 55px;
+        font-style: normal;
+        font-weight: normal;
+        font-variant: normal;
+        text-transform: none;
+        line-height: 1;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+
+    #togglebtn {
+        float: right;
+        width: 78px;
+    }
+
+    .tailwind-dark .e-dashboardlayout.e-control .e-panel .e-panel-container .e-panel-header, .tailwind .e-dashboardlayout.e-control .e-panel .e-panel-container .e-panel-header {
+        border-radius: 6px;
+    }
+</style>
